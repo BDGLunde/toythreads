@@ -1,4 +1,4 @@
-"Master" merge branch for part 1:
+Ed's branch for part 1:
 
 The first step in this project is to add a system call by which a process can create a new thread:
 
