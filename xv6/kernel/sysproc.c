@@ -7,6 +7,23 @@
 #include "sysfunc.h"
 
 int
+sys_clone(void)
+{
+  int fn;
+  int arg;
+  int ustack;
+
+  if (argint(0, &fn) < 0)
+     return -1;
+  if (argint(1, &arg) < 0)
+     return -1;
+  if (argint(2, &ustack) < 0)
+     return -1;
+ 
+  return clone((void *)fn, (void *)arg, (void *)ustack);
+}
+
+int
 sys_fork(void)
 {
   return fork();
