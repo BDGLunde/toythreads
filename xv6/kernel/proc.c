@@ -140,17 +140,17 @@ clone(void (*fn)(void*), void* arg, void* ustack)
   np->isThread = 1;
   np->ustack = ustack;
   np->tf->eip = (int)fn;
-  np->tf->ebp = (int)ustack + PGSIZE;
+  np->tf->ebp = (int)ustack + PGSIZE - 8;
   np->tf->esp = (int)ustack + PGSIZE - 8;
 
-  //Top word of stack has fake ret addr
+  //Fake ret addr
   int* fakeRetAddr;
-  fakeRetAddr = (int*)np->tf->esp + 4;
+  fakeRetAddr = (int*)np->tf->esp;
   *fakeRetAddr = 0xFFFFFFFF;
   
-  //Next word of stack has arg
+  //arg
   int* argAddr;
-  argAddr = (int*)np->tf->esp;
+  argAddr = (int*)np->tf->esp + 4;
   *argAddr = (int) arg;
   
   for(i = 0; i < NOFILE; i++)

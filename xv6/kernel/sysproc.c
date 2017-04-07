@@ -24,6 +24,17 @@ sys_clone(void)
 }
 
 int
+sys_join(void)
+{
+  int ustack;
+
+   if (argint(0, &ustack) < 0)
+     return -1;
+
+  return join((void**)ustack);
+}
+
+int
 sys_fork(void)
 {
   return fork();
