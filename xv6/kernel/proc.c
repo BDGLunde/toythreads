@@ -145,12 +145,12 @@ clone(void (*fn)(void*), void* arg, void* ustack)
 
   //Fake ret addr
   int* fakeRetAddr;
-  fakeRetAddr = (int*)np->tf->esp;
+  fakeRetAddr = (void *)np->tf->esp;
   *fakeRetAddr = 0xFFFFFFFF;
   
   //arg
   int* argAddr;
-  argAddr = (int*)np->tf->esp + 4;
+  argAddr = (void *)np->tf->esp + 4;
   *argAddr = (int) arg;
   
   for(i = 0; i < NOFILE; i++)
