@@ -1,3 +1,6 @@
+#include "threads.h"
+#include "spinlock.h"
+
 #ifndef _USER_H_
 #define _USER_H_
 
@@ -42,6 +45,7 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
+
 
 #endif // _USER_H_
 
