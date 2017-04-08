@@ -21,12 +21,20 @@ typedef union header Header;
 static Header base;
 static Header *freep;
 
+static struct spinlock sLock baselock;
+static struct spinlock sLock freeplock;
+
 void
 free(void *ap)
 {
+  if (freeplock == NULL) {
+	  init_lock(&freeplock);
+  }
+
   Header *bp, *p;
 
   bp = (Header*)ap - 1;
+  spin_lock(&freeplock);
   for(p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
     if(p >= p->s.ptr && (bp > p || bp < p->s.ptr))
       break;
@@ -41,8 +49,13 @@ free(void *ap)
   } else
     p->s.ptr = bp;
   freep = p;
+
+  spin_unlock(&freeplock);
 }
 
+/* Don't think morecore needs locking since they're already
+ * held by the time malloc calls it
+ */
 static Header*
 morecore(uint nu)
 {
@@ -63,10 +76,21 @@ morecore(uint nu)
 void*
 malloc(uint nbytes)
 {
+  if (baselock == NULL) {
+	  init_lock(&baselock);
+  }
+
+  if (freeplock == NULL) {
+	  init_lock(&freeplock);
+  }
+
   Header *p, *prevp;
   uint nunits;
 
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
+
+  spin_lock(&baselock);
+  spin_lock(&freeplock);
   if((prevp = freep) == 0){
     base.s.ptr = freep = prevp = &base;
     base.s.size = 0;
@@ -81,10 +105,15 @@ malloc(uint nbytes)
         p->s.size = nunits;
       }
       freep = prevp;
+      spin_unlock(&freeplock);
+      spin_unlock(&baselock);
       return (void*)(p + 1);
     }
     if(p == freep)
-      if((p = morecore(nunits)) == 0)
+      if((p = morecore(nunits)) == 0) {
+	spin_unlock(&freeplock);
+	spin_unlock(&baselock);
         return 0;
+      }
   }
 }
