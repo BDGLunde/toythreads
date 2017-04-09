@@ -225,13 +225,15 @@ int join(void** ustack)
 void
 park(void) 
 {
-  if(!proc->isSetParked) 
+  if(!proc->isSetParked)
 	return;
 
-  acquire(&ptable.lock);
+  struct spinlock dummy;
+  initlock(&dummy, "dummy");
+  acquire(&dummy);
   proc->isSetParked = 0;
-  sleep((void*)proc->pid, &ptable.lock);
-  release(&ptable.lock);
+  sleep((void*)proc->pid, &dummy);
+  release(&dummy);
 }
 
 int 
@@ -251,7 +253,7 @@ unpark(int pid)
   struct proc *p;
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if((int)p->chan == pid) {
+    if(p->pid == pid) {
       if (p->isSetParked == 1)
       {
 	somethingWasParked = 0;
