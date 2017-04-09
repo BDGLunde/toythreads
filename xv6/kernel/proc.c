@@ -225,19 +225,46 @@ int join(void** ustack)
 void
 park(void) 
 {
+  if(!proc->isSetParked) 
+	return;
 
+  acquire(&ptable.lock);
+  proc->isSetParked = 0;
+  sleep((void*)proc->pid, &ptable.lock);
+  release(&ptable.lock);
 }
 
 int 
 setpark(void)
 {
+  if (proc->isSetParked)
+	return -1;
+
+  proc->isSetParked = 1;
   return 0;
 }
 
 int
 unpark(int pid)
 {
-  return pid;
+  int somethingWasParked = -1;
+  struct proc *p;
+
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if((int)p->chan == pid) {
+      if (p->isSetParked == 1)
+      {
+	somethingWasParked = 0;
+      }
+      p->isSetParked = 0;
+      if(p->state == SLEEPING) {
+        wakeup((void*)pid);
+     	somethingWasParked = 0;
+      }
+    }
+  }
+
+  return somethingWasParked;
 }
 
 // Create a new process copying p as the parent.
