@@ -18,7 +18,9 @@ USER_PROGS := \
 	wc\
 	zombie\
 	threadTest\
-	part2
+	qTest\
+	part2\
+	mutexTest
 
 USER_PROGS := $(addprefix user/, $(USER_PROGS))
 
@@ -29,7 +31,9 @@ USER_LIBS := \
 	printf.o\
 	umalloc.o\
 	threads.o\
-	spinlock.o
+	spinlock.o\
+	queue.o\
+	mutex.o
 
 USER_LIBS := $(addprefix user/, $(USER_LIBS))
 

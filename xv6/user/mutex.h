@@ -3,7 +3,9 @@
 #define MUTEX_H
 
 struct mutex {
-	/* fill this in! */
+	uint flag;
+	uint guard;
+	queue_t queue;
 };
 
 void mutex_init(struct mutex* mtx);

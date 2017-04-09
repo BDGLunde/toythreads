@@ -1,5 +1,7 @@
 #include "threads.h"
 #include "spinlock.h"
+#include "queue.h"
+#include "mutex.h"
 
 #ifndef _USER_H_
 #define _USER_H_
