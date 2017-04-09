@@ -7,6 +7,29 @@
 #include "sysfunc.h"
 
 int
+sys_park(void)
+{
+  park();
+  return 0;
+}
+
+int
+sys_setpark(void)
+{
+  return setpark();
+}
+
+int 
+sys_unpark(void)
+{
+  int i;
+  if (argint(0, &i) < 0)
+     return -1;
+  
+  return unpark(i);
+}
+
+int
 sys_clone(void)
 {
   int fn;

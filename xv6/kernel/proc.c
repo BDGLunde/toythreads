@@ -222,6 +222,23 @@ int join(void** ustack)
   }
 }
 
+void
+park(void) 
+{
+
+}
+
+int 
+setpark(void)
+{
+  return 0;
+}
+
+int
+unpark(int pid)
+{
+  return pid;
+}
 
 // Create a new process copying p as the parent.
 // Sets up stack to return as if from system call.
