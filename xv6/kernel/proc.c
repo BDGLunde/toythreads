@@ -119,18 +119,13 @@ growproc(int n)
   }
   proc->sz = sz;
 
-  //cprintf("My pid is: %d\n", proc->pid);
-  //cprintf("Parent pid is: %d\n", proc->parent->pid);
-  //cprintf("Name is: %s\n", proc->name);
   acquire(&ptable.lock);
-  //cprintf("am i a thread? %d\n", proc->isThread);
   if (proc->isThread == 1) {
 	  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
 		  if (p->parent == proc->parent  && p->isThread == 1)
 			  p->sz = sz;
 	  }
 	  proc->parent->sz = sz; // Parent should update too
-	  //cprintf("sz is: %d\n", sz);
 
   }
   else { // This is being called from the parent
@@ -140,8 +135,6 @@ growproc(int n)
 	}
   }
   release(&ptable.lock);
-  //cprintf("parent's sz is: %d\n", proc->parent->sz);
-  //cprintf("thread sz is: %d\n", proc->sz);
   switchuvm(proc);
   return 0;
 }

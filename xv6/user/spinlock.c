@@ -17,6 +17,6 @@ void spin_lock(struct spinlock *lk)
 
 void spin_unlock(struct spinlock *lk)
 {
-	xchg(&lk->locked, 0);
+	xchg(&lk->locked, 0); // Necessary? can probably just set to 0?
 }
 
