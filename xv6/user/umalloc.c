@@ -21,14 +21,14 @@ typedef union header Header;
 static Header base;
 static Header *freep;
 
-static struct spinlock sLock baselock;
-static struct spinlock sLock freeplock;
+static struct spinlock baselock;
+static struct spinlock freeplock;
 
 void
 free(void *ap)
 {
-  if (freeplock == NULL) {
-	  init_lock(&freeplock);
+  if (freeplock.created != 1) {
+	  spin_init(&freeplock);
   }
 
   Header *bp, *p;
@@ -76,12 +76,12 @@ morecore(uint nu)
 void*
 malloc(uint nbytes)
 {
-  if (baselock == NULL) {
-	  init_lock(&baselock);
+  if (baselock.created != 1) {
+	  spin_init(&baselock);
   }
 
-  if (freeplock == NULL) {
-	  init_lock(&freeplock);
+  if (freeplock.created != 1) {
+	  spin_init(&freeplock);
   }
 
   Header *p, *prevp;
@@ -105,15 +105,17 @@ malloc(uint nbytes)
         p->s.size = nunits;
       }
       freep = prevp;
+
       spin_unlock(&freeplock);
       spin_unlock(&baselock);
       return (void*)(p + 1);
     }
-    if(p == freep)
+    if(p == freep) {
+      spin_unlock(&freeplock);
       if((p = morecore(nunits)) == 0) {
-	spin_unlock(&freeplock);
 	spin_unlock(&baselock);
         return 0;
       }
+    }
   }
 }

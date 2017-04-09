@@ -6,6 +6,7 @@ void spin_init(struct spinlock* lk)
 {
 	/* fill this in! */
 	lk->locked = 0;
+	lk->created = 1;
 }
 
 void spin_lock(struct spinlock *lk)

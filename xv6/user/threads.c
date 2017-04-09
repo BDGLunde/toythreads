@@ -5,6 +5,7 @@
 int thread_create(void (*thfunc)(void*), void* arg)
 {
 	void *thstack;
+	//printf(1, "THREAD CREATED\n");
 	if ((thstack = malloc(4096)) == 0)
 		return -1;
 	return clone(thfunc, arg, thstack);
