@@ -3,7 +3,9 @@
 #define SEMAPHORE_H
 
 struct semaphore {
-	/* fill this in! */
+	uint counter;
+	uint guard;
+	queue_t queue;
 };
 
 void sem_init(struct semaphore* sem, int initval);

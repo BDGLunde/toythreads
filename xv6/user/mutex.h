@@ -6,6 +6,7 @@ struct mutex {
 	uint flag;
 	uint guard;
 	queue_t queue;
+	int heldBy;
 };
 
 void mutex_init(struct mutex* mtx);

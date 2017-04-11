@@ -20,7 +20,10 @@ USER_PROGS := \
 	threadTest\
 	qTest\
 	part2\
-	mutexTest
+	part3\
+	setpark\
+	mutexTest\
+	part4-sem
 
 USER_PROGS := $(addprefix user/, $(USER_PROGS))
 
@@ -33,7 +36,8 @@ USER_LIBS := \
 	threads.o\
 	spinlock.o\
 	queue.o\
-	mutex.o
+	mutex.o\
+	semaphore.o
 
 USER_LIBS := $(addprefix user/, $(USER_LIBS))
 

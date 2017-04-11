@@ -225,48 +225,77 @@ int join(void** ustack)
 void
 park(void) 
 {
-  if(!proc->isSetParked)
+  acquire(&ptable.lock);
+  if (proc->isSetParked == 0)
+  {
+	release(&ptable.lock);
 	return;
+  }
 
-  struct spinlock dummy;
-  initlock(&dummy, "dummy");
-  acquire(&dummy);
-  proc->isSetParked = 0;
-  sleep((void*)proc->pid, &dummy);
-  release(&dummy);
+  //acquire(&ptable.lock);
+  proc->isSetParked = 0;  
+  proc->isParked = 1;
+
+  // Go to sleep.
+  proc->chan = (void*)proc->pid;
+  proc->state = SLEEPING;
+  sched();
+
+  // Tidy up.
+  proc->chan = 0;
+
+  release(&ptable.lock);
 }
 
 int 
 setpark(void)
 {
-  if (proc->isSetParked)
+  acquire(&ptable.lock);
+  if (proc->isSetParked == 1 || proc->isParked == 1)
+  {
+	release(&ptable.lock);
 	return -1;
+  }
 
+  //acquire(&ptable.lock);
   proc->isSetParked = 1;
+
+  release(&ptable.lock);
   return 0;
 }
 
 int
 unpark(int pid)
 {
-  int somethingWasParked = -1;
   struct proc *p;
 
+  acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->pid == pid) {
-      if (p->isSetParked == 1)
-      {
-	somethingWasParked = 0;
-      }
-      p->isSetParked = 0;
-      if(p->state == SLEEPING) {
-        wakeup((void*)pid);
-     	somethingWasParked = 0;
-      }
-    }
-  }
+    if(p->pid == pid){
+    	if(p->isSetParked == 0 && p->isParked == 0)
+	{
+	  	release(&ptable.lock);
+		return -1;
+	}
 
-  return somethingWasParked;
+	p->isSetParked = 0; // If p->pid is unparked between setpark and park, park will return immediately
+     
+
+      	// Wake process from sleep if necessary.
+      	if(p->isParked == 1)
+	{
+        	p->state = RUNNABLE;
+		p->isParked = 0;
+      		release(&ptable.lock);
+      		return 0;
+    	}
+	
+	release(&ptable.lock);
+	return 0;
+      }
+  }
+  release(&ptable.lock);
+  return -1;
 }
 
 // Create a new process copying p as the parent.
@@ -581,7 +610,7 @@ procdump(void)
       state = states[p->state];
     else
       state = "???";
-    cprintf("%d %s %s", p->pid, state, p->name);
+    cprintf("%d %s %s isParked: %d isSetP: %d", p->pid, state, p->name, p->isParked, p->isSetParked);
     if(p->state == SLEEPING){
       getcallerpcs((uint*)p->context->ebp+2, pc);
       for(i=0; i<10 && pc[i] != 0; i++)

@@ -77,6 +77,7 @@ struct proc {
   char *ustack;		       // Stack for current thread
   int isThread;	 	       // Is a thread
   int isSetParked;	       // Return immed. on park if 1
+  int isParked;		       
 };
 
 // Process memory is laid out contiguously, low addresses first:

@@ -2,6 +2,7 @@
 #include "spinlock.h"
 #include "queue.h"
 #include "mutex.h"
+#include "semaphore.h"
 
 #ifndef _USER_H_
 #define _USER_H_
