@@ -4,39 +4,34 @@
 
 void sem_init(struct semaphore* sem, int initval)
 {
-	sem->counter = (uint)initval;
-	sem->guard = 0;
+	sem->counter = initval;
+	mutex_init(&sem->mtx);
 	q_init(&(sem->queue));
 }
 
 void sem_wait(struct semaphore* sem)
 {
-	while(xchg(&sem->guard, 1) == 1)
-		;
-	(sem->counter)--;
+	mutex_lock(&sem->mtx);
+	sem->counter--;
 	if (sem->counter < 0)
 	{
 		q_add(&(sem->queue), getpid());
 		setpark();
-		sem->guard = 0;
+		mutex_unlock(&sem->mtx);
 		park();
 	}
-	else {
-		//sem->counter++;
-		xchg(&sem->guard, 0);
-	}
+	mutex_unlock(&sem->mtx);
 }
 
 void sem_post(struct semaphore* sem)
 {
-	while(xchg(&sem->guard, 1) == 1)
-                ;
+	mutex_lock(&sem->mtx);
 
 	(sem->counter)++;
-	if (sem->counter < 0)
+	if (sem->counter <= 0)
 	{
 		unpark(q_remove(&(sem->queue)));
 	}	
-	xchg(&sem->guard, 0);
+	mutex_unlock(&sem->mtx);
 }
 

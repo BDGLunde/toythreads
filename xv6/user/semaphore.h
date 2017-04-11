@@ -3,8 +3,8 @@
 #define SEMAPHORE_H
 
 struct semaphore {
-	uint counter;
-	uint guard;
+	int counter;
+	struct mutex mtx;
 	queue_t queue;
 };
 
