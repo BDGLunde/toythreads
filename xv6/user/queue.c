@@ -17,8 +17,10 @@ void q_add(queue_t* queue, int val)
 
 int q_remove(queue_t * queue)
 {
-	if(queue->size == 0)
+	if(queue->size == 0) {
+		//printf(1, "ARGGGGGGGGGGH\n");
 		return -1;
+	}
 	int val = queue->array[0];
 	int i;
 	for (i = 0; i+1 < queue->size; i++)

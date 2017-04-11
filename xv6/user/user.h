@@ -3,6 +3,7 @@
 #include "queue.h"
 #include "mutex.h"
 #include "semaphore.h"
+#include "condvar.h"
 
 #ifndef _USER_H_
 #define _USER_H_

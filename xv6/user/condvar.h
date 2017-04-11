@@ -3,6 +3,8 @@
 #define CONDVAR_H
 
 struct condvar {
+	queue_t queue;
+	struct mutex mtx;
 	/* fill this in! */
 };
 

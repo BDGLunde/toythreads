@@ -23,7 +23,8 @@ USER_PROGS := \
 	part3\
 	setpark\
 	mutexTest\
-	part4-sem
+	part4-sem\
+	part4-cv
 
 USER_PROGS := $(addprefix user/, $(USER_PROGS))
 
@@ -37,7 +38,8 @@ USER_LIBS := \
 	spinlock.o\
 	queue.o\
 	mutex.o\
-	semaphore.o
+	semaphore.o\
+	condvar.o
 
 USER_LIBS := $(addprefix user/, $(USER_LIBS))
 
