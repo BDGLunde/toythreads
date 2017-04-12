@@ -4,7 +4,7 @@
 
 struct semaphore {
 	int counter;
-	struct mutex mtx;
+	struct mutex mtx; 
 	queue_t queue;
 };
 
