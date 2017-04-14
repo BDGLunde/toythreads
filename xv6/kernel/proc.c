@@ -119,6 +119,9 @@ growproc(int n)
   }
   proc->sz = sz;
 
+  /* Uh... yeah, this is ugly, but it appears to work.
+   * It would have been better to use a shared pointer to sz instead
+   */
   acquire(&ptable.lock);
   if (proc->isThread == 1) {
 	  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
@@ -222,6 +225,9 @@ int join(void** ustack)
   }
 }
 
+/* Out of our desperation and ignorance, we ultimately adopted the 'coarse' strategy of
+ * locking the ptable whenever we needed to access it in any way.
+ */
 void
 park(void) 
 {
@@ -241,7 +247,7 @@ park(void)
   proc->state = SLEEPING;
   sched();
 
-  // Tidy up.
+  // Tidy up
   proc->chan = 0;
 
   release(&ptable.lock);

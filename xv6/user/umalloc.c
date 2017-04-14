@@ -76,6 +76,10 @@ morecore(uint nu)
 void*
 malloc(uint nbytes)
 {
+  /* Malloc should be the process' first entry point into this code, so this seems
+   * appropriate for initializing these global locks
+   */
+
   if (baselock.created != 1) {
 	  spin_init(&baselock);
   }

@@ -3,7 +3,7 @@
 #define SEMAPHORE_H
 
 struct semaphore {
-	int counter;
+	int counter; // CANNOT be uint, since counter may be negative
 	struct mutex mtx;
 	queue_t queue;
 };

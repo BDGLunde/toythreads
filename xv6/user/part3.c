@@ -17,7 +17,7 @@ void f(void *arg)
   if(setpark() < 0)
           printf(1, "setpark failed!\n");
   park();  
-
+  printf(1, "in thread, park pid %d\n", getpid());
   int i;
 
   for(i = 0; i < 10; i++)
@@ -28,8 +28,7 @@ void f(void *arg)
       status = tmp +1;
   }
 
-
-  if(unpark(getpid() +1) < 0)
+ if(unpark(getpid() +1) < 0)
           printf(1, "in thread, unpark failed! pid %d\n", getpid() + 1);
 
   exit();
@@ -38,7 +37,7 @@ void f(void *arg)
 
 int main()
 {
-
+  printf(1, "Main pid is %d\n", getpid());
   spin_init(&lk);
   int i; 
   for(i = 0; i < 20; i++)

@@ -5,7 +5,6 @@
 struct condvar {
 	queue_t queue;
 	struct mutex mtx;
-	/* fill this in! */
 };
 
 void cv_init(struct condvar* cv);

@@ -28,6 +28,7 @@ void cv_signal(struct condvar* cv)
 	mutex_unlock(&cv->mtx);
 }
 
+/* Like signal, but wakes up all waiters */
 void cv_broadcast(struct condvar* cv)
 {
 	mutex_lock(&cv->mtx);

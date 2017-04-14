@@ -47,7 +47,6 @@ static struct node* new_node(int val)
 
 struct node* head = NULL;
 struct spinlock lock;
-struct mutex mtx;
 
 static void threadfunc(void* arg)
 {
@@ -57,10 +56,10 @@ static void threadfunc(void* arg)
 	for (i = 0; i < (int)arg; i++) {
 		n = new_node(i);
 
-		mutex_lock(&mtx);
+		spin_lock(&lock);
 		n->next = head;
 		head = n;
-		mutex_unlock(&mtx);
+		spin_unlock(&lock);
 	}
 
 	exit();
@@ -91,7 +90,7 @@ main(int argc, char *argv[])
 	for (i = 0; i < numthreads; i++)
 		pids[i] = -1;
 
-	mutex_init(&mtx);
+	spin_init(&lock);
 
 	for (i = 0; i < numthreads; i++) {
 		pids[i] = thread_create(threadfunc, (void*)count);
